@@ -6,29 +6,36 @@ $requrl
 
 "
 
-resp="https://talkgadget.google.com/talkgadget/blank?code=4/RQFDX6uF61i3J0YpxdpENbvAnp3I7rlLMMdrlAtRBI0EnReltVGaCZ2wEjtSJahsbXMjBaMY3hJgWvMJZWHQOAg&scope=email%20https://www.googleapis.com/auth/chromoting%20https://www.googleapis.com/auth/googletalk%20https://www.googleapis.com/auth/userinfo.email%20openid&authuser=0&session_state=2914b8a3545e2c1732055993b1b19b9d3274e066..4c69&prompt=consent"
-
 read -p 'Enter the response URL: ' resp
 rawcode=$(echo "$resp" | awk -F'[=&]' '{print $2}')
 
-echo "Extracted code:"
-echo ""
-echo "$rawcode"
-echo ""
+echo "
+Extracted code:
+
+$rawcode
+
+"
 name=${1:-$(hostname)}
 code=${2:-$rawcode}
 
-echo "Activating host $name - you will be asked to create a PIN."
-echo ""
-echo ""
+echo "
+Activating host $name - you will be asked to create a PIN.
+
+"
+
 
 /opt/google/chrome-remote-desktop/start-host \
 	--code="$code" \
 	--redirect-url=https://talkgadget.google.com/talkgadget/blank \
 	--name="$name"
 
-echo "Installing chrome remote friendly window manager..."
+session="~/.chrome-remote-desktop-session"
+echo "
+Installing chrome remote friendly window manager..."
 sudo apt install lxde -y
-echo "exec /usr/bin/startlxde" > ~/.chrome-remote-desktop-session 
-echo "Restarting the remote desktop service..."
+echo "
+Creating $session"
+echo "exec /usr/bin/startlxde" > $session 
+echo "
+Restarting the remote desktop service..."
 sudo systemctl restart chrome-remote-desktop.service
